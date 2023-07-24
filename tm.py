@@ -20,7 +20,7 @@ def preprocess_image(image, input_shape, is_quantized):
 def get_top_prediction(predictions, labels):
     return labels[np.argmax(predictions)]
 
-def main(model_path, label_path):
+def main(model_path, label_path, camera=0):
     # 載入模型
     interpreter = tf.lite.Interpreter(model_path=model_path)
     interpreter.allocate_tensors()
@@ -37,7 +37,7 @@ def main(model_path, label_path):
     input_shape = tuple(input_details[0]['shape'][1:3])  # 轉換為元組形式
 
     # 初始化Webcam
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(camera)
 
     # 初始化FPS計算
     prev_time = 0
@@ -81,9 +81,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Real-time classification using TensorFlow Lite model")
     parser.add_argument("--model", default="model.tflite", help="Path to the TensorFlow Lite model (.tflite)")
     parser.add_argument("--labels", default="labels.txt", help="Path to the labels file (labels.txt)")
+    parser.add_argument("--camera", type=int, default=0, help="Camera index (default is 0)")
 
     args = parser.parse_args()
 
-    main(args.model, args.labels)
-
+    main(args.model, args.labels, camera=args.camera)
 
